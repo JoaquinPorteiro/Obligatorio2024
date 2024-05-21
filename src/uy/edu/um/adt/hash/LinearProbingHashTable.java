@@ -6,7 +6,7 @@ public class LinearProbingHashTable<K, V> implements MyHashTable<K, V> {
 
     private K[] keys;
     private V[] values;
-    private int size;
+    private int size; // Prueba
     private int capacity;
 
     public LinearProbingHashTable() {
