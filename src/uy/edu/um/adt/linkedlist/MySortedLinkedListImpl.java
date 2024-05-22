@@ -4,18 +4,18 @@ public class MySortedLinkedListImpl<T extends Comparable<T>> extends MyLinkedLis
 
     public void addSorted(T value) {
         if (value == null) {
-            return; // Ignorar valores nulos
+            return;
         }
 
         Node<T> newNode = new Node<>(value);
 
-        if (this.first == null) { // Lista vacía
+        if (this.first == null) {
             this.first = newNode;
             this.last = newNode;
-        } else if (this.first.getValue().compareTo(value) >= 0) { // Insertar al inicio
+        } else if (this.first.getValue().compareTo(value) >= 0) {
             newNode.setNext(this.first);
             this.first = newNode;
-        } else { // Insertar en el medio o al final
+        } else {
             Node<T> current = this.first;
             while (current.getNext() != null && current.getNext().getValue().compareTo(value) < 0) {
                 current = current.getNext();

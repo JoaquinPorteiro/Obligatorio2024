@@ -7,7 +7,7 @@ public interface MyTree<K, T> {
     int size();
     int countLeaf();
     int countCompleteElements();
-    List<K> inOrder();
-    List<K> preOrder();
-    List<K> postOrder();
+    // List<K> inOrder();
+    // List<K> preOrder();
+    // List<K> postOrder();
 }

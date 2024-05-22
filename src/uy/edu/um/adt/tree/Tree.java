@@ -130,7 +130,7 @@ public class Tree<K, T> implements MyTree<K, T> {
         return count + countCompleteElementsRecursive(current.leftChild) + countCompleteElementsRecursive(current.rightChild);
     }
 
-    @Override
+    /*@Override
     public List<K> inOrder() {
         List<K> result = new ArrayList<>();
         inOrderRecursive(root, result);
@@ -173,5 +173,5 @@ public class Tree<K, T> implements MyTree<K, T> {
             postOrderRecursive(node.rightChild, result);
             result.add(node.key);
         }
-    }
+    } */
 }
