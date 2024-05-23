@@ -1,8 +1,10 @@
 package uy.edu.um.adt.tree;
-import java.util.ArrayList;
-import java.util.List;
+import uy.edu.um.adt.linkedlist.MyLinkedListImpl;
+import uy.edu.um.adt.linkedlist.MyList;
+import uy.edu.um.adt.queue.EmptyQueueException;
+import uy.edu.um.adt.queue.MyQueue;
 
-public class Tree<K, T> implements MyTree<K, T> {
+public class Tree<K extends Comparable<K>, T> implements MyTree<K, T> {
     private Node<K, T> root;
 
     public Tree() {
@@ -18,40 +20,39 @@ public class Tree<K, T> implements MyTree<K, T> {
         if (current == null) {
             return null;
         }
-        if (current.key.equals(key)) {
+        if (key.compareTo(current.key) == 0) {
             return current.data;
         }
-        T leftResult = findRecursive(current.leftChild, key);
-        if (leftResult != null) {
-            return leftResult;
-        }
-        return findRecursive(current.rightChild, key);
+        return key.compareTo(current.key) < 0
+                ? findRecursive(current.leftChild, key)
+                : findRecursive(current.rightChild, key);
     }
 
     @Override
     public void insert(K key, T data, K parentKey) {
-        Node<K, T> newNode = new Node<>(key, data);
         if (root == null) {
-            root = newNode;
+            root = new Node<>(key, data);
         } else {
-            insertRecursive(root, newNode, parentKey);
+            insertRecursive(root, key, data);
         }
     }
 
-    private void insertRecursive(Node<K, T> current, Node<K, T> newNode, K parentKey) {
-        if (current == null) {
-            return;
-        }
-        if (current.key.equals(parentKey)) {
+    private void insertRecursive(Node<K, T> current, K key, T data) {
+        if (key.compareTo(current.key) < 0) {
             if (current.leftChild == null) {
-                current.leftChild = newNode;
-            } else if (current.rightChild == null) {
-                current.rightChild = newNode;
+                current.leftChild = new Node<>(key, data);
+            } else {
+                insertRecursive(current.leftChild, key, data);
             }
-            return;
+        } else if (key.compareTo(current.key) > 0) {
+            if (current.rightChild == null) {
+                current.rightChild = new Node<>(key, data);
+            } else {
+                insertRecursive(current.rightChild, key, data);
+            }
+        } else {
+            current.data = data; // actualiza el valor si la clave ya existe
         }
-        insertRecursive(current.leftChild, newNode, parentKey);
-        insertRecursive(current.rightChild, newNode, parentKey);
     }
 
     @Override
@@ -63,22 +64,36 @@ public class Tree<K, T> implements MyTree<K, T> {
         if (current == null) {
             return null;
         }
-        if (current.key.equals(key)) {
+
+        if (key.compareTo(current.key) == 0) {
+            // Nodo a eliminar encontrado
+
+            // Nodo sin hijos
             if (current.leftChild == null && current.rightChild == null) {
                 return null;
+            }
+
+            // Nodo con un solo hijo
+            if (current.leftChild == null) {
+                return current.rightChild;
             }
             if (current.rightChild == null) {
                 return current.leftChild;
             }
-            if (current.leftChild == null) {
-                return current.rightChild;
-            }
+
+            // Nodo con dos hijos
             K smallestKey = findSmallestKey(current.rightChild);
             current.key = smallestKey;
+            current.data = findRecursive(root, smallestKey);
             current.rightChild = deleteRecursive(current.rightChild, smallestKey);
             return current;
+
         }
-        current.leftChild = deleteRecursive(current.leftChild, key);
+        if (key.compareTo(current.key) < 0) {
+            current.leftChild = deleteRecursive(current.leftChild, key);
+            return current;
+        }
+
         current.rightChild = deleteRecursive(current.rightChild, key);
         return current;
     }
@@ -123,55 +138,82 @@ public class Tree<K, T> implements MyTree<K, T> {
         if (current == null) {
             return 0;
         }
-        int count = 0;
-        if (current.leftChild != null && current.rightChild != null) {
-            count = 1;
-        }
+        int count = (current.leftChild != null && current.rightChild != null) ? 1 : 0;
         return count + countCompleteElementsRecursive(current.leftChild) + countCompleteElementsRecursive(current.rightChild);
     }
 
-    /*@Override
-    public List<K> inOrder() {
-        List<K> result = new ArrayList<>();
+    @Override
+    public MyList<K> inOrder() {
+        MyList<K> result = new MyLinkedListImpl<>();
         inOrderRecursive(root, result);
         return result;
     }
 
-    private void inOrderRecursive(Node<K, T> node, List<K> result) {
-        if (node != null) {
-            inOrderRecursive(node.leftChild, result);
-            result.add(node.key);
-            inOrderRecursive(node.rightChild, result);
+    private void inOrderRecursive(Node<K, T> current, MyList<K> result) {
+        if (current != null) {
+            inOrderRecursive(current.leftChild, result);
+            result.add(current.key);
+            inOrderRecursive(current.rightChild, result);
         }
     }
 
     @Override
-    public List<K> preOrder() {
-        List<K> result = new ArrayList<>();
+    public MyList<K> preOrder() {
+        MyList<K> result = new MyLinkedListImpl<>();
         preOrderRecursive(root, result);
         return result;
     }
 
-    private void preOrderRecursive(Node<K, T> node, List<K> result) {
-        if (node != null) {
-            result.add(node.key);
-            preOrderRecursive(node.leftChild, result);
-            preOrderRecursive(node.rightChild, result);
+    private void preOrderRecursive(Node<K, T> current, MyList<K> result) {
+        if (current != null) {
+            result.add(current.key);
+            preOrderRecursive(current.leftChild, result);
+            preOrderRecursive(current.rightChild, result);
         }
     }
 
     @Override
-    public List<K> postOrder() {
-        List<K> result = new ArrayList<>();
+    public MyList<K> postOrder() {
+        MyList<K> result = new MyLinkedListImpl<>();
         postOrderRecursive(root, result);
         return result;
     }
 
-    private void postOrderRecursive(Node<K, T> node, List<K> result) {
-        if (node != null) {
-            postOrderRecursive(node.leftChild, result);
-            postOrderRecursive(node.rightChild, result);
-            result.add(node.key);
+    private void postOrderRecursive(Node<K, T> current, MyList<K> result) {
+        if (current != null) {
+            postOrderRecursive(current.leftChild, result);
+            postOrderRecursive(current.rightChild, result);
+            result.add(current.key);
         }
-    } */
+    }
+
+    @Override
+    public MyList<K> levelOrder() {
+        MyList<K> result = new MyLinkedListImpl<>();
+        if (root == null) {
+            return result;
+        }
+
+        MyQueue<Node<K, T>> queue = new MyLinkedListImpl<>();
+        queue.enqueue(root);
+
+        while (queue.size() > 0) {
+            Node<K, T> current = null;
+            try {
+                current = queue.dequeue();
+            } catch (EmptyQueueException e) {
+                e.printStackTrace();
+            }
+            if (current != null) {
+                result.add(current.key);
+                if (current.leftChild != null) {
+                    queue.enqueue(current.leftChild);
+                }
+                if (current.rightChild != null) {
+                    queue.enqueue(current.rightChild);
+                }
+            }
+        }
+        return result;
+    }
 }
