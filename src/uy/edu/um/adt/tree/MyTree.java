@@ -13,5 +13,5 @@ public interface MyTree<K, T> {
     MyList<K> preOrder();
     MyList<K> postOrder();
     MyList<K> levelOrder();
+    void loadPostFijaExpression(String sPostFija);
 }
-

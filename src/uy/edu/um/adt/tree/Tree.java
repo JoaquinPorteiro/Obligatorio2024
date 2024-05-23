@@ -3,6 +3,8 @@ import uy.edu.um.adt.linkedlist.MyLinkedListImpl;
 import uy.edu.um.adt.linkedlist.MyList;
 import uy.edu.um.adt.queue.EmptyQueueException;
 import uy.edu.um.adt.queue.MyQueue;
+import uy.edu.um.adt.stack.EmptyStackException;
+import uy.edu.um.adt.stack.MyStack;
 
 public class Tree<K extends Comparable<K>, T> implements MyTree<K, T> {
     private Node<K, T> root;
@@ -215,5 +217,38 @@ public class Tree<K extends Comparable<K>, T> implements MyTree<K, T> {
             }
         }
         return result;
+    }
+    @Override
+    public void loadPostFijaExpression(String sPostFija) {
+        MyStack<Node<String, String>> stack = new MyLinkedListImpl<>();
+
+        for (String token : sPostFija.split(" ")) {
+            if (isOperator(token)) {
+                Node<String, String> right = null;
+                Node<String, String> left = null;
+                try {
+                    right = stack.pop();
+                    left = stack.pop();
+                } catch (EmptyStackException e) {
+                    e.printStackTrace();
+                }
+                Node<String, String> node = new Node<>(token, token);
+                node.leftChild = left;
+                node.rightChild = right;
+                stack.push(node);
+            } else {
+                stack.push(new Node<>(token, token));
+            }
+        }
+
+        try {
+            root = stack.pop();
+        } catch (EmptyStackException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isOperator(String token) {
+        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
     }
 }
