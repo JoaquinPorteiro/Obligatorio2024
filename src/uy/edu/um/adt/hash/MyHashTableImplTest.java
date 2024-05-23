@@ -78,7 +78,7 @@ public class MyHashTableImplTest {
 
     @Test
     public void testCollisionHandlingQuadratic() {
-        hashTableQuadratic.put("Aa", 1); // hash collision with "BB" in a table of size 11
+        hashTableQuadratic.put("Aa", 1);
         hashTableQuadratic.put("BB", 2);
         assertTrue(hashTableQuadratic.contains("Aa"));
         assertTrue(hashTableQuadratic.contains("BB"));
