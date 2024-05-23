@@ -242,7 +242,7 @@ public class Tree<K extends Comparable<K>, T> implements MyTree<K, T> {
         }
 
         try {
-            root = stack.pop();
+            root = (Node<K, T>) stack.pop();
         } catch (EmptyStackException e) {
             e.printStackTrace();
         }

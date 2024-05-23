@@ -5,23 +5,12 @@ import uy.edu.um.adt.linkedlist.MyList;
 
 public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySearchTree<K, T> {
     private NodeBST<K, T> root;
+    public NodeBST<K, T> getRoot() {
+        return root;
+    }
 
     public BinarySearchTree() {
         this.root = null;
-    }
-
-    private static class NodeBST<K, T> {
-        K key;
-        T data;
-        NodeBST<K, T> leftChild;
-        NodeBST<K, T> rightChild;
-
-        NodeBST(K key, T data) {
-            this.key = key;
-            this.data = data;
-            this.leftChild = null;
-            this.rightChild = null;
-        }
     }
 
     @Override
@@ -33,12 +22,12 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
         if (current == null) {
             return null;
         }
-        if (key.compareTo(current.key) == 0) {
-            return current.data;
+        if (key.compareTo(current.getKey()) == 0) {
+            return current.getData();
         }
-        return key.compareTo(current.key) < 0
-                ? findRecursive(current.leftChild, key)
-                : findRecursive(current.rightChild, key);
+        return key.compareTo(current.getKey()) < 0
+                ? findRecursive(current.getLeftChild(), key)
+                : findRecursive(current.getRightChild(), key);
     }
 
     @Override
@@ -51,13 +40,13 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
             return new NodeBST<>(key, data);
         }
 
-        if (key.compareTo(current.key) < 0) {
-            current.leftChild = insertRecursive(current.leftChild, key, data);
-        } else if (key.compareTo(current.key) > 0) {
-            current.rightChild = insertRecursive(current.rightChild, key, data);
+        if (key.compareTo(current.getKey()) < 0) {
+            current.setLeftChild(insertRecursive(current.getLeftChild(), key, data));
+        } else if (key.compareTo(current.getKey()) > 0) {
+            current.setRightChild(insertRecursive(current.getRightChild(), key, data));
         } else {
             // Si la clave ya existe, se actualiza el dato
-            current.data = data;
+            current.setData(data);
         }
 
         return current;
@@ -73,41 +62,41 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
             return null;
         }
 
-        if (key.compareTo(current.key) == 0) {
+        if (key.compareTo(current.getKey()) == 0) {
             // Nodo a eliminar encontrado
 
             // Nodo sin hijos
-            if (current.leftChild == null && current.rightChild == null) {
+            if (current.getLeftChild() == null && current.getRightChild() == null) {
                 return null;
             }
 
             // Nodo con un solo hijo
-            if (current.leftChild == null) {
-                return current.rightChild;
+            if (current.getLeftChild() == null) {
+                return current.getRightChild();
             }
-            if (current.rightChild == null) {
-                return current.leftChild;
+            if (current.getRightChild() == null) {
+                return current.getLeftChild();
             }
 
             // Nodo con dos hijos
-            K smallestKey = findSmallestKey(current.rightChild);
-            current.key = smallestKey;
-            current.data = findRecursive(root, smallestKey);
-            current.rightChild = deleteRecursive(current.rightChild, smallestKey);
+            K smallestKey = findSmallestKey(current.getRightChild());
+            current.setKey(smallestKey);
+            current.setData(findRecursive(root, smallestKey));
+            current.setRightChild(deleteRecursive(current.getRightChild(), smallestKey));
             return current;
 
         }
-        if (key.compareTo(current.key) < 0) {
-            current.leftChild = deleteRecursive(current.leftChild, key);
+        if (key.compareTo(current.getKey()) < 0) {
+            current.setLeftChild(deleteRecursive(current.getLeftChild(), key));
             return current;
         }
 
-        current.rightChild = deleteRecursive(current.rightChild, key);
+        current.setRightChild(deleteRecursive(current.getRightChild(), key));
         return current;
     }
 
     private K findSmallestKey(NodeBST<K, T> root) {
-        return root.leftChild == null ? root.key : findSmallestKey(root.leftChild);
+        return root.getLeftChild() == null ? root.getKey() : findSmallestKey(root.getLeftChild());
     }
 
     @Override
@@ -119,9 +108,9 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
 
     private void inOrderRecursive(NodeBST<K, T> current, MyList<K> result) {
         if (current != null) {
-            inOrderRecursive(current.leftChild, result);
-            result.add(current.key);
-            inOrderRecursive(current.rightChild, result);
+            inOrderRecursive(current.getLeftChild(), result);
+            result.add(current.getKey());
+            inOrderRecursive(current.getRightChild(), result);
         }
     }
 
@@ -134,9 +123,9 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
 
     private void preOrderRecursive(NodeBST<K, T> current, MyList<K> result) {
         if (current != null) {
-            result.add(current.key);
-            preOrderRecursive(current.leftChild, result);
-            preOrderRecursive(current.rightChild, result);
+            result.add(current.getKey());
+            preOrderRecursive(current.getLeftChild(), result);
+            preOrderRecursive(current.getRightChild(), result);
         }
     }
 
@@ -149,10 +138,9 @@ public class BinarySearchTree<K extends Comparable<K>, T> implements MyBinarySea
 
     private void postOrderRecursive(NodeBST<K, T> current, MyList<K> result) {
         if (current != null) {
-            postOrderRecursive(current.leftChild, result);
-            postOrderRecursive(current.rightChild, result);
-            result.add(current.key);
+            postOrderRecursive(current.getLeftChild(), result);
+            postOrderRecursive(current.getRightChild(), result);
+            result.add(current.getKey());
         }
     }
 }
-
