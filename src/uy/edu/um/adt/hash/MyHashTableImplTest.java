@@ -70,7 +70,7 @@ public class MyHashTableImplTest {
 
     @Test
     public void testCollisionHandlingLinear() {
-        hashTableLinear.put("Aa", 1); // hash collision with "BB" in a table of size 11
+        hashTableLinear.put("Aa", 1);
         hashTableLinear.put("BB", 2);
         assertTrue(hashTableLinear.contains("Aa"));
         assertTrue(hashTableLinear.contains("BB"));

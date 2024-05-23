@@ -50,7 +50,7 @@ public class MyHashTableOpenSortedTest {
 
     @Test
     public void testCollisionHandling() {
-        hashTable.put("Aa", 1); // hash collision with "BB" in a table of size 11
+        hashTable.put("Aa", 1);
         hashTable.put("BB", 2);
         assertTrue(hashTable.contains("Aa"));
         assertTrue(hashTable.contains("BB"));
